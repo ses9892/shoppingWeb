@@ -1,0 +1,52 @@
+server:
+  port: 10005
+spring:
+  application:
+    name: shoppingProject
+  thymeleaf:
+    prefix: classpath:/templates/
+  datasource:
+    driver-class-name: org.h2.Driver
+    #url:   jdbc:mysql://shopapplication.ch5yswrkfhkp.us-east-2.rds.amazonaws.com:3306/shopping?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+    username: sa
+    password:
+    url: jdbc:h2:mem:testdb
+    initialization-mode: always
+    platform: h2
+    data: classpath:/data.sql
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        #insert into product (P_IDX ,P_NAME ,P_PRICE ,STORE_S_IDX ) values(1,'이름',10000,58745874);
+#바인딩
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+shopping:
+  product:
+    size: 1
+  store:
+    size: 1
+
+HateOas:
+  product:
+    list:
+    search:
+  review:
+    list: /api/v1/review/list?page=
+    search: /api/v1/review/search?title=
