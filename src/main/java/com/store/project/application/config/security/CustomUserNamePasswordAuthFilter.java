@@ -2,8 +2,6 @@ package com.store.project.application.config.security;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oracle.jrockit.jfr.ContentType;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -67,8 +65,6 @@ public class CustomUserNamePasswordAuthFilter extends UsernamePasswordAuthentica
     @Override
     protected String obtainUsername(HttpServletRequest request) {
         String userIdParameter = super.getUsernameParameter();
-        String contentTpye = request.getHeader("Content-type");
-        String media = MediaType.APPLICATION_JSON.toString();
         if(request.getHeader("Content-type").equals("application/json")){
             return jsonRequest.get(userIdParameter);
         }
