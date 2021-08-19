@@ -2,8 +2,8 @@ FROM ses9892/ec2_shopping_server:tagname
 
 WORKDIR /root/git/shopping/shoppingWeb
 
-RUN git pull \
- && maven package -DshipTests
+RUN git pull
+CMD maven package -DshipTests
 
 WORKDIR /root/git/shopping/shoppingWeb/target
 
