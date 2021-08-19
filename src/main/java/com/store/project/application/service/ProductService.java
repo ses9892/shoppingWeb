@@ -5,6 +5,7 @@ import com.store.project.application.domain.dto.RequestProduct;
 import com.store.project.application.domain.entity.Product;
 import com.store.project.application.request.RequestReFundData;
 import com.store.project.application.request.RequestSaleData;
+import com.store.project.application.request.RequestStockData;
 import com.store.project.application.response.ResponseData;
 import org.springframework.data.web.PagedResourcesAssembler;
 
@@ -26,4 +27,6 @@ public interface ProductService {
     ResponseData refoundProduct(RequestReFundData requestReFundData);
 
     ResponseData selectSale(int idx);
+
+    ResponseData productStockUpdate(RequestStockData stockData, int idx);
 }

@@ -73,7 +73,7 @@ public class ReViewRestController {
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
     }
     @PutMapping(value = "api/v1/review")
-    public ResponseEntity<ResponseData> changeReView(@Valid @RequestBody ReViewDto reViewDto){
+    public ResponseEntity<ResponseData> changeReView(@RequestBody ReViewDto reViewDto){
         ResponseData responseData = reViewService.changeReView(reViewDto);
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
     }
@@ -88,6 +88,16 @@ public class ReViewRestController {
     @PostMapping(value = "api/v1/review-comment")
     public ResponseEntity<ResponseData> insertReViewComm(@Valid @RequestBody RequestReComment comment){
         ResponseData responseData = reViewService.insertReViewComment(comment);
+        return ResponseEntity.status(responseData.getStatus()).body(responseData);
+    }
+    @DeleteMapping(value = "api/v1/review-comment")
+    public ResponseEntity<ResponseData> DeleteReViewComm(@RequestBody RequestReComment comment){
+        ResponseData responseData = reViewService.deleteReViewComm(comment);
+        return ResponseEntity.status(responseData.getStatus()).body(responseData);
+    }
+    @PutMapping(value = "api/v1/review-comment")
+    public ResponseEntity<ResponseData> UpdateReViewComm(@RequestBody RequestReComment comment){
+        ResponseData responseData = reViewService.updateReViewComm(comment);
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
     }
 

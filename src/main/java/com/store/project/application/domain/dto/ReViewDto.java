@@ -2,20 +2,15 @@ package com.store.project.application.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.store.project.application.domain.entity.Product;
+import com.store.project.application.domain.entity.ReView;
 import com.store.project.application.domain.entity.ReViewComment;
 import lombok.Data;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 
-import javax.persistence.Column;
-import javax.persistence.Lob;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -41,13 +36,21 @@ public class ReViewDto {
 
     private Long product_idx;
 
-    private List<ReViewComment> reViewComment;
+    private List<Long> reViewComment_idx;
 
     private Link ReViewLink;
 
+    private int totalComment;
+
     public void setProduct(Product product){
         product_idx = product.getIdx();
-
+    }
+    public void setReViewComment_idx(ReView reView){
+        reViewComment_idx = new ArrayList<>();
+        List<ReViewComment> reViewComment = reView.getReViewComment();
+        for (ReViewComment r:reViewComment) {
+            reViewComment_idx.add(r.getIdx());
+        }
     }
 
 }

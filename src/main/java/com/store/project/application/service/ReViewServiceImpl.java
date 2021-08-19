@@ -38,10 +38,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.persistence.EntityManager;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -135,9 +132,10 @@ public class ReViewServiceImpl implements ReViewService{
         List<ReViewDto> dto =new ArrayList<>();
         //HateOas self Link
         for(int i=0; i<pageReView.getContent().size(); i++){
-            WebMvcLinkBuilder linkTo = linkTo(methodOn(ReViewRestController.class).selectReView(i));
+            WebMvcLinkBuilder linkTo = linkTo(methodOn(ReViewRestController.class).selectReView(i+1));
             dto.add(new ModelMapper().map(pageReView.getContent().get(i),ReViewDto.class));
             dto.get(i).setReViewLink(linkTo.withSelfRel());
+            dto.get(i).setTotalComment(pageReView.getContent().get(i).getReViewComment().size());
         }
 //        for (ReView re:pageReView.getContent()) {
 //            dto.add(new ModelMapper().map(re,ReViewDto.class));
@@ -222,6 +220,7 @@ public class ReViewServiceImpl implements ReViewService{
                 .build();
     }
 
+    //리뷰댓글 생성
     @Override
     public ResponseData insertReViewComment(RequestReComment comment) {
         //해당 리뷰글 있나없나 검사.
@@ -234,6 +233,7 @@ public class ReViewServiceImpl implements ReViewService{
 
         Optional<ReView> OpView = reViewRepository.findById((long) comment.getR_idx());
         ReViewDto reViewDto = new ModelMapper().map(OpView.get(),ReViewDto.class);
+        reViewDto.setReViewComment_idx(OpView.get());
 
         return ResponseData.builder()
                 .code(ResponseDataStatus.SUCCESS).status(HttpStatus.OK)
@@ -242,10 +242,55 @@ public class ReViewServiceImpl implements ReViewService{
                 .build();
     }
 
+    //리뷰댓글 조회
     @Override
     public ResponseData selectReView(int idx) {
+        ReView reView = this.FoundReViewCheck(idx);
+        ReViewDto reViewDto = new ModelMapper().map(reView,ReViewDto.class);
+        reViewDto.setReViewComment_idx(reView);
+        reViewDto.setTotalComment(reView.getReViewComment().size());
+        return ResponseData.builder()
+                .code(ResponseDataStatus.SUCCESS).status(HttpStatus.OK)
+                .item(reViewDto)
+                .build();
+    }
 
-        return null;
+    //리뷰댓글삭제
+    @Override
+    public ResponseData deleteReViewComm(RequestReComment comment) {
+        ReViewComment reViewComment = this.ValidReViewComm(comment);
+        reViewCommentRepository.delete(reViewComment);
+        return ResponseData.builder()
+                .code(ResponseDataStatus.SUCCESS).status(HttpStatus.OK)
+                .message("댓글이 정상적으로 삭제되었습니다.")
+                .build();
+    }
+    //리뷰댓글수정
+    @Override
+    public ResponseData updateReViewComm(RequestReComment comment) {
+        ReViewComment reViewComment = this.ValidReViewComm(comment);
+        if(comment!=null){
+        reViewComment.setComment(comment.getComment());
+        }
+        reViewComment.setDate(new Date());
+        ReViewComment save = reViewCommentRepository.save(reViewComment);
+        ReViewCommentDto reViewCommentDto = new ModelMapper().map(save,ReViewCommentDto.class);
+        reViewCommentDto.SetReView_idx(save);
+        return ResponseData.builder()
+                .code(ResponseDataStatus.SUCCESS).status(HttpStatus.OK)
+                .item(reViewCommentDto)
+                .message("댓글이 정상적으로 수정되었습니다.")
+                .build();
+    }
+
+    private ReViewComment ValidReViewComm(RequestReComment comment){
+        Optional<ReViewComment> byId = reViewCommentRepository.findById((long) comment.getR_idx());
+        if(!byId.isPresent()){ throw new RuntimeException("존재하지않거나 삭제된 댓글 입니다"); }
+        ReViewComment reViewComment = byId.get();
+        if(!reViewComment.getWriter().equals(getUserId())){
+            throw new RuntimeException("댓글 작성자가 아니여서 작업을 수행할 수 없습니다.");
+        }
+        return reViewComment;
     }
 
     private Product FoundProductCheck(int idx){
@@ -255,6 +300,7 @@ public class ReViewServiceImpl implements ReViewService{
         }
         return byId.get();
     }
+
     private ReView FoundReViewCheck(int idx){
         Optional<ReView> byId = reViewRepository.findById((long) idx);
         if(!byId.isPresent()){
@@ -275,8 +321,6 @@ public class ReViewServiceImpl implements ReViewService{
         if(!writer.equals(userId)){
             throw new WriterIsNotException("리뷰글 작성자만 게시글을 수정,삭제를할 수 있습니다.");
         }
-
-
     }
 
     private void reviewChangeData(ReView reView , ReViewDto reViewDto){

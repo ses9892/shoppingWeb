@@ -21,4 +21,8 @@ public interface ReViewService {
     ResponseData insertReViewComment(RequestReComment comment);
 
     ResponseData selectReView(int idx);
+
+    ResponseData deleteReViewComm(RequestReComment comment);
+
+    ResponseData updateReViewComm(RequestReComment comment);
 }

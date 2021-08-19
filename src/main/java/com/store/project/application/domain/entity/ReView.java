@@ -1,14 +1,21 @@
 package com.store.project.application.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class ReView {
 
     @Id
@@ -43,8 +50,7 @@ public class ReView {
     @JoinColumn(name = "store_s_idx")
     private Store store;
 
-    @OneToMany(mappedBy = "reView")
-    @JsonManagedReference
+    @OneToMany(mappedBy = "reView",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     List<ReViewComment> reViewComment = new ArrayList<>();
 
 

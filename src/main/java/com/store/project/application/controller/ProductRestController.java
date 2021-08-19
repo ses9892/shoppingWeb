@@ -6,6 +6,7 @@ import com.store.project.application.domain.dto.ProductDto;
 import com.store.project.application.domain.dto.RequestProduct;
 
 import com.store.project.application.domain.entity.Product;
+import com.store.project.application.request.RequestStockData;
 import com.store.project.application.response.ResponseData;
 import com.store.project.application.service.ProductService;
 import com.store.project.application.service.StoreService;
@@ -69,6 +70,13 @@ public class ProductRestController {
         ResponseData responseData = productService.productDataChange(product);
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
     }
+
+    @PutMapping(value = "/api/v1/product/stock/{idx}")
+    public ResponseEntity<ResponseData> productDataChange(@PathVariable("idx") int idx , @Valid @RequestBody RequestStockData StockData){
+        ResponseData responseData = productService.productStockUpdate(StockData,idx);
+        return ResponseEntity.status(responseData.getStatus()).body(responseData);
+    }
+
     @DeleteMapping(value = "/api/v1/product")
     public ResponseEntity<ResponseData> productDataChange(@RequestParam("idx") int idx){
         ResponseData responseData = productService.productDataDelete(idx);

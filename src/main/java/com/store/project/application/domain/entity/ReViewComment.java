@@ -2,12 +2,15 @@ package com.store.project.application.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class ReViewComment {
 
     @Id
@@ -24,6 +27,5 @@ public class ReViewComment {
 
     @ManyToOne
     @JoinColumn(name = "ReView_idx")
-    @JsonBackReference
     private ReView reView;
 }

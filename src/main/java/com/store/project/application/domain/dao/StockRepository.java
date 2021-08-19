@@ -10,4 +10,7 @@ public interface StockRepository extends JpaRepository<Stock,Long> {
 
     Optional<Stock> findByProduct(Product product);
 
+    Optional<Stock> findByProductIdx(long idx);
+
+
 }

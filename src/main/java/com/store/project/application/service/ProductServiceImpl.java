@@ -10,6 +10,7 @@ import com.store.project.application.domain.dto.*;
 import com.store.project.application.domain.entity.*;
 import com.store.project.application.request.RequestReFundData;
 import com.store.project.application.request.RequestSaleData;
+import com.store.project.application.request.RequestStockData;
 import com.store.project.application.response.ResponseData;
 import com.store.project.application.response.ResponseDataStatus;
 import com.store.project.application.util.FileUploadBinary;
@@ -84,7 +85,7 @@ public class ProductServiceImpl implements ProductService{
         entityManager.clear();
         //재고
         Stock stock = new Stock();
-        if(product.getSt_ea()==0){ stock.setSt_ea(1); }else{stock.setSt_ea(product.getSt_ea()); }
+        if(product.getSt_ea()==null){ stock.setSt_ea(1); }else{stock.setSt_ea(Integer.parseInt(product.getSt_ea())); }
         stock.setSt_flag(true);
         stock.setProduct(saveEntity);
         stockRepository.save(stock);
@@ -157,14 +158,17 @@ public class ProductServiceImpl implements ProductService{
         if(!productEntity.isPresent()){
             throw new ProductNotFoundException("해당 상품은 존재하지 않거나 삭제되었습니다");
         }
+        //등록자 여부 체크
         Product proEntity = productEntity.get();
-
+        String store_userId = proEntity.getStore().getClient().getUserId();
+        if(!store_userId.equals(getUserId())){
+            throw new OwnerIsNotException("상품을 등록한 사업자만이 수정할 수 있습니다.");
+        }
         // setter -> save
         this.productChange(proEntity,product);
         proEntity=productRepository.save(proEntity);
         ProductDto productDto = new ModelMapper().map(proEntity,ProductDto.class);
         productDto.setStoreIdx(proEntity);
-
 
         return ResponseData.builder()
                 .message("상품 수정이 완료 되었습니다.")
@@ -307,6 +311,42 @@ public class ProductServiceImpl implements ProductService{
                 .build();
     }
 
+    @Override
+    public ResponseData productStockUpdate(RequestStockData stockData, int idx) {
+        //상품 조회
+        Optional<Product> productEntity = productRepository.findById((long) idx);
+        //존재 삭제 여부 조회
+        if(!productEntity.isPresent()){
+            throw new ProductNotFoundException("해당 상품은 존재하지 않거나 삭제되었습니다");
+        }
+        //등록자 여부 체크
+        String store_userId = productEntity.get().getStore().getClient().getUserId();
+        if(!store_userId.equals(getUserId())){
+            throw new OwnerIsNotException("상품을 등록한 사업자만이 수정할 수 있습니다.");
+        }
+        Stock stock = stockRepository.findByProductIdx((long)idx).get();
+        int ea = stockData.getEa();
+        // setter
+        if(ea==0){
+            stock.setSt_ea(0);
+            stock.setSt_flag(false);
+        }else{
+            stock.setSt_ea(ea);
+            stock.setSt_flag(stockData.getFlag());
+        }
+        //save
+        Stock savedStock = stockRepository.save(stock);
+        StockDto dto = new ModelMapper().map(savedStock,StockDto.class);
+        dto.setProduct_idx(savedStock.getProduct().getIdx());
+
+        return ResponseData.builder()
+                .code(ResponseDataStatus.SUCCESS)
+                .status(HttpStatus.OK)
+                .message("재고 수정이 완료 되었습니다.")
+                .item(dto)
+                .build();
+    }
+
     private void refundWithStockUpdate(Sale sale) {
         int originalStockEA = sale.getProduct().getStock().getSt_ea();
         int refundProductEA = sale.getEa();
@@ -328,11 +368,20 @@ public class ProductServiceImpl implements ProductService{
 
     private void productChange(Product product , RequestProduct reProduct){
         if(reProduct.getPName()!=null){ product.setPName(reProduct.getPName()); }
-        if(reProduct.getP_price()!=0){ product.setP_price(reProduct.getP_price()); }
+        if(reProduct.getP_price()==null){ product.setP_price(Integer.parseInt(reProduct.getP_price())); }
         if(reProduct.getP_description()!=null){ product.setP_description(reProduct.getP_description());}
         //재교
         if(reProduct.getSt_flag()!=null){product.getStock().setSt_flag(reProduct.getSt_flag());}
-        if(reProduct.getSt_ea()!=product.getStock().getSt_ea()){ product.getStock().setSt_ea(reProduct.getSt_ea()); }
+        if(reProduct.getSt_ea()!=null){
+            int ea = Integer.parseInt(reProduct.getSt_ea());
+            if(ea == 0){
+            product.getStock().setSt_flag(false);
+            product.getStock().setSt_ea(0);
+            }else{
+                product.getStock().setSt_ea(Integer.parseInt(reProduct.getSt_ea()));
+            }
+        }else{
+        }
         if(reProduct.getFileBase64()!=null){
             product.setP_originalName(reProduct.getFileName());
             HashMap<String,String> hmap = new HashMap<>();

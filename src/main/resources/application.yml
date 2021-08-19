@@ -1,5 +1,5 @@
 server:
-  port: 10005
+  port: 8080
 spring:
   application:
     name: shoppingProject
@@ -7,9 +7,10 @@ spring:
     prefix: classpath:/templates/
   datasource:
     driver-class-name: org.h2.Driver
-    #url:   jdbc:mysql://shopapplication.ch5yswrkfhkp.us-east-2.rds.amazonaws.com:3306/shopping?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
-    username: sa
-    password:
+#    driver-class-name: com.mysql.jdbc.Driver
+#    url:   jdbc:mysql://shopapplication.ch5yswrkfhkp.us-east-2.rds.amazonaws.com:3306/shopping?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+    username: ses9892
+    password: 11111111
     url: jdbc:h2:mem:testdb
     initialization-mode: always
     platform: h2

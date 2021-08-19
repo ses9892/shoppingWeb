@@ -2,6 +2,7 @@ package com.store.project.application.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.store.project.application.domain.entity.ReView;
+import com.store.project.application.domain.entity.ReViewComment;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -18,5 +19,9 @@ public class ReViewCommentDto {
 
     private String writer;
 
-    private ReView reView;
+    private Long review_idx;
+
+    public void SetReView_idx(ReViewComment reViewComment){
+        this.review_idx = reViewComment.getReView().getIdx();
+    }
 }

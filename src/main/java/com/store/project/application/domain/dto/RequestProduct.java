@@ -20,13 +20,13 @@ public class RequestProduct {
 
     private String p_description;
 
-    private int p_price;
+    private String p_price;
 
     private String fileName; //original fileName
 
     private String fileBase64;
 
-    private int st_ea;
+    private String st_ea;
 
     private Boolean st_flag;
 
