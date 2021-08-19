@@ -16,7 +16,7 @@ import java.util.UUID;
 public class FileUploadBinary {
 
     private final String windowUploadPath = Paths.get("D:","shopImg").toString();
-
+    String test;
     String filebase64;
 
     private final String getRandomString(){
