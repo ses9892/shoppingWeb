@@ -6,6 +6,6 @@ RUN git pull
 RUN mvn package -DshipTests
 
 ENV PORT 8080
-EXPOSE 8080
+EXPOSE $PORT
 
 CMD java -jar target/application-0.0.1-SNAPSHOT.jar
