@@ -19,6 +19,7 @@ public class FileUploadBinary {
     String test111;
     String filebase64;
     String test2222;
+    String test22223;
 
     private final String getRandomString(){
         return UUID.randomUUID().toString().replace("-","");
