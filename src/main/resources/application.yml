@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 10050
 spring:
   application:
     name: shoppingProject
@@ -51,3 +51,8 @@ HateOas:
   review:
     list: /api/v1/review/list?page=
     search: /api/v1/review/search?title=
+
+jwt:
+  header: Authorization
+  secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
+  token-validity-in-seconds: 86400

@@ -1,10 +1,9 @@
 package com.store.project.application.Handling.Handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.store.project.application.config.jwt.TokenProvider;
 import com.store.project.application.response.ResponseData;
 import com.store.project.application.response.ResponseDataStatus;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,12 +14,16 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+
+    private TokenProvider tokenProvider;
+
+    public LoginSuccessHandler(TokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
+    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -31,6 +34,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler i
         UserDetails userDetails = (UserDetails) principal;
         items.put("userId",userDetails.getUsername());
         items.put("role",userDetails.getAuthorities());
+        String token = tokenProvider.createToken(authentication);
+        items.put("token",token);
         //토큰 response
         ResponseData responseData = ResponseData.builder()
                                     .status(HttpStatus.OK).code(ResponseDataStatus.SUCCESS)
