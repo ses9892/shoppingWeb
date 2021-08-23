@@ -17,6 +17,7 @@ import java.io.IOException;
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+        response.setCharacterEncoding("UTF-8");
         response.sendError(HttpServletResponse.SC_FORBIDDEN, "접근 권한이 없습니다. 관리자에게 문의하시기 바랍니다.");
     }
 }

@@ -19,7 +19,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        String test =null;
+        response.setCharacterEncoding("UTF-8");
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "계정 정보가 잘못됐거나, 로그인이 필요합니다.");
     }
 }
