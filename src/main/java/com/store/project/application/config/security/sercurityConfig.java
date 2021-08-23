@@ -67,7 +67,7 @@ public class sercurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/api/v1/register.do").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/login").permitAll()
+                .antMatchers(HttpMethod.POST,"/login").permitAll()
                 .antMatchers("/api/v1/duplication.do").permitAll()
                 .antMatchers("/api/v1/store/list","/api/v1/store/list/search").permitAll()
                 .antMatchers("/api/v1/product/list").permitAll()
