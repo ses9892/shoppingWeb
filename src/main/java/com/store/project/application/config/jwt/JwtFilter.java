@@ -39,8 +39,8 @@ public class JwtFilter extends GenericFilterBean {
         //요청받은 URI
         String requestURI = httpServletRequest.getRequestURI();
         Boolean aBoolean = JwtExcludeUrl(requestURI, httpServletRequest);
-        
-        if(!aBoolean){
+
+        if(aBoolean){
             chain.doFilter(request, response);
             return;
         }
