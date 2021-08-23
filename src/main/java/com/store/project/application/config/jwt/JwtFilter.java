@@ -38,6 +38,12 @@ public class JwtFilter extends GenericFilterBean {
         String jwt = this.resolveToken(httpServletRequest);
         //요청받은 URI
         String requestURI = httpServletRequest.getRequestURI();
+        Boolean aBoolean = JwtExcludeUrl(requestURI, httpServletRequest);
+        
+        if(!aBoolean){
+            chain.doFilter(request, response);
+            return;
+        }
         //jwt가 있나 확인 + 유효성 확인
         if(StringUtils.hasText(jwt)&& tokenProvider.validToken(jwt)){
             Authentication authentication = tokenProvider.getAuthentication(jwt);
@@ -57,5 +63,29 @@ public class JwtFilter extends GenericFilterBean {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    private Boolean JwtExcludeUrl(String requestURI,HttpServletRequest httpServletRequest){
+        if(requestURI.equals("/login") ||
+            requestURI.equals("/api/v1/register.do") ||
+            requestURI.equals("/api/v1/duplication.do") ||
+            requestURI.equals("/api/v1/store/list") ||
+            requestURI.equals("/api/v1/store/list/search")||
+            requestURI.equals("/api/v1/product/list")||
+            requestURI.equals("/api/v1/product/search")||
+            requestURI.equals("/api/v1/review/list")||
+            requestURI.equals("/api/v1/review/search")||
+            requestURI.equals("/api/v1/review")
+        ){
+            return false;
+        }
+        String method = httpServletRequest.getMethod();
+        if(method.equals("GET") || requestURI.equals("/api/v1/product")){
+            return false;
+        }
+        if(method.equals("GET") || requestURI.equals("/api/v1/product/sale")){
+            return false;
+        }
+        return true;
     }
 }

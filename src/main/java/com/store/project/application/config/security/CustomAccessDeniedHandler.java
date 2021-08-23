@@ -19,7 +19,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         try{
             UserDetails userDetails = (UserDetails) auth.getPrincipal();
-        }catch (Exception ex){
+        }catch (Exception ex) {
             e.printStackTrace();
         }
 

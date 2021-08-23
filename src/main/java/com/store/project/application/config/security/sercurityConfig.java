@@ -56,6 +56,8 @@ public class sercurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/css/**", "/js/**");
+        
+
     }
 
     @Override
@@ -65,9 +67,8 @@ public class sercurityConfig extends WebSecurityConfigurerAdapter {
         http.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler);
         http.authorizeRequests()
-                .antMatchers("/api/v1/register.do").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/v1/register.do").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
-                .antMatchers(HttpMethod.POST,"/login").permitAll()
                 .antMatchers("/api/v1/duplication.do").permitAll()
                 .antMatchers("/api/v1/store/list","/api/v1/store/list/search").permitAll()
                 .antMatchers("/api/v1/product/list").permitAll()
@@ -77,7 +78,6 @@ public class sercurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/api/v1/product/sale").permitAll()
                 .antMatchers("/api/v1/review/list","/api/v1/review/search").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/v1/review").permitAll()
-        .anyRequest().authenticated()
         .and()
             .logout()
                 .logoutUrl("/logout")
@@ -122,6 +122,7 @@ public class sercurityConfig extends WebSecurityConfigurerAdapter {
         }
         return filter;
     }
+    // CORS
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

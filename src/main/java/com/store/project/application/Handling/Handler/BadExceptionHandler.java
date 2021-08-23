@@ -39,23 +39,6 @@ public class BadExceptionHandler {
 
         );
     }
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ResponseData> RuntimeException(RuntimeException exception){
-        return ResponseEntity.status(UserDuplicateException.HTTP_STATUS).body(ResponseData.builder()
-                .message(exception.getMessage())
-                .status(UserDuplicateException.HTTP_STATUS)
-                .code(UserDuplicateException.code)
-                .build()
-        );
-    }
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ResponseData> AccessDeniedException(AccessDeniedException exception){
-        ResponseData responseData = ResponseData.builder()
-                .status(HttpStatus.FORBIDDEN).code(ResponseDataStatus.FORBIDDEN)
-                .message("Token Forbidden error (403)")
-                .build();
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseData);
-    }
     @ExceptionHandler(AnonyMousNotException.class)
     public ResponseEntity<ResponseData> AnonyMousNotException(AnonyMousNotException exception){
         HashMap<String,Object> hmap = new HashMap<>();
@@ -66,7 +49,6 @@ public class BadExceptionHandler {
                 .code(AnonyMousNotException.code)
                 .item(hmap)
                 .build()
-
         );
     }
     @ExceptionHandler(UserNotFoundException.class)

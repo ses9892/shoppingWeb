@@ -19,13 +19,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        ResponseData responseData = ResponseData.builder()
-                .status(HttpStatus.UNAUTHORIZED).code(ResponseDataStatus.UNAUTHORIZED)
-                .message("Access Token Not Valid")
-                .build();
-        ObjectMapper mapper = new ObjectMapper();
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().print(mapper.writeValueAsString(responseData));
-        response.getWriter().flush();
+        String test =null;
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "계정 정보가 잘못됐거나, 로그인이 필요합니다.");
     }
 }

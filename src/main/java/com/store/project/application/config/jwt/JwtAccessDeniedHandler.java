@@ -17,13 +17,6 @@ import java.io.IOException;
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        ResponseData responseData = ResponseData.builder()
-                .status(HttpStatus.FORBIDDEN).code(ResponseDataStatus.FORBIDDEN)
-                .message("Token Forbidden error (403)")
-                .build();
-        ObjectMapper mapper = new ObjectMapper();
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().print(mapper.writeValueAsString(responseData));
-        response.getWriter().flush();
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, "접근 권한이 없습니다. 관리자에게 문의하시기 바랍니다.");
     }
 }
