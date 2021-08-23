@@ -10,6 +10,7 @@ import com.store.project.application.request.RequestClientInfoChange;
 import com.store.project.application.response.ResponseData;
 import com.store.project.application.response.ResponseDataStatus;
 import com.store.project.application.util.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -149,6 +151,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        log.info("LoadUserByUSerName: "+userId);
         Optional<Client> Client = clientRepository.findById(userId);
         Client.orElseThrow(()->new InternalAuthenticationServiceException("해당 Id는 존재 하지 않습니다."));
         ModelMapper mapper = new ModelMapper();
