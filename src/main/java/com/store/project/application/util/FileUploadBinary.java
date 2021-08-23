@@ -16,7 +16,13 @@ import java.util.UUID;
 public class FileUploadBinary {
 
     private final String windowUploadPath = Paths.get("D:","shopImg").toString();
+    private final String linuxUploadPath = "/home/ec2-user/Shop-data/img";
     String filebase64;
+    String os;
+
+    public FileUploadBinary() {
+       this.os = System.getProperty("os.name").toLowerCase();
+    }
 
     private final String getRandomString(){
         return UUID.randomUUID().toString().replace("-","");
@@ -39,7 +45,6 @@ public class FileUploadBinary {
     public File fileUpload(HashMap<String,String> hmap){
         //파일 있나없나 검사
         //폴더 없을시 폴더생성
-        this.MakePath();
         //HashMap Data
         String FileName = hmap.get("fileName");
         String FileBase64 = hmap.get("fileBase64");
@@ -49,9 +54,15 @@ public class FileUploadBinary {
         String saveName = getRandomString()+"."+extension;
         //fileBase64 decoding시작
         byte[] decodeBytes = Base64.getDecoder().decode(FileBase64);
-
-        //경로지정 + 파일업로드 시작
-        File file = new File(windowUploadPath+"/"+saveName);
+        //Os 별 업로드
+        File file =null;
+        if(os.equals("windows 10")){
+            this.MakePath(windowUploadPath);
+            file = new File(windowUploadPath+"/"+saveName);
+        }else{
+            this.MakePath(linuxUploadPath);
+            file = new File(linuxUploadPath+"/"+saveName);
+        }
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             fileOutputStream.write(decodeBytes,0,decodeBytes.length);
@@ -62,8 +73,8 @@ public class FileUploadBinary {
         return file;
     }
 
-    private void MakePath() {
-        File dir = new File(windowUploadPath);
+    private void MakePath(String OsPath) {
+        File dir = new File(OsPath);
         if(dir.exists()==false){
             dir.mkdirs(); //security 사용
         }
