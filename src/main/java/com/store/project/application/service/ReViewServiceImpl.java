@@ -16,6 +16,7 @@ import com.store.project.application.response.ResponseData;
 import com.store.project.application.response.ResponseDataStatus;
 import com.store.project.application.util.FileUploadBinary;
 import com.store.project.application.util.HateOasLoader;
+import com.store.project.application.util.SecurityUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MatchingStrategy;
@@ -311,10 +312,8 @@ public class ReViewServiceImpl implements ReViewService{
 
     private String getUserId() {
         //SecurityContext 로그인 내역 확인
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDetails userDetails = (UserDetails) principal;
-        String userId = userDetails.getUsername();
-        return userId;
+        Optional<String> currentUserName = SecurityUtil.getCurrentUserName();
+        return currentUserName.get();
     }
     private void ValidWriterCheck(String writer){
         String userId = getUserId();

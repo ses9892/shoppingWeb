@@ -9,6 +9,7 @@ import com.store.project.application.domain.entity.Client;
 import com.store.project.application.request.RequestClientInfoChange;
 import com.store.project.application.response.ResponseData;
 import com.store.project.application.response.ResponseDataStatus;
+import com.store.project.application.util.SecurityUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +66,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseData duplication(ClientDto clientDto) {
 
-        Optional<Client> cl2 = clientRepository.findById(clientDto.getUserId());
-        if(cl2.isPresent()){
+//        Optional<Client> cl2 = clientRepository.findById(clientDto.getUserId());
+        Boolean aBoolean = clientRepository.existsByUserId(clientDto.getUserId());
+        if(aBoolean){
             throw new UserDuplicateException("중복된 아이디 입니다.");
         }
         ResponseData responseData = ResponseData.builder()
@@ -79,8 +81,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseData myinfo() {
-        String userId = getUserId();
-
+//        String userId = getUserId();
+        String userId = SecurityUtil.getCurrentUserName().get();
         //회원정보 가져오기
         Optional<Client> userEntity = clientRepository.findById(userId);
         Client client = userEntity.get();
@@ -158,9 +160,7 @@ public class UserServiceImpl implements UserService {
     }
     private String getUserId() {
         //SecurityContext 로그인 내역 확인
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDetails userDetails = (UserDetails) principal;
-        String userId = userDetails.getUsername();
-        return userId;
+        Optional<String> currentUserName = SecurityUtil.getCurrentUserName();
+        return currentUserName.get();
     }
 }

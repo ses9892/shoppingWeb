@@ -14,6 +14,7 @@ import com.store.project.application.request.RequestStockData;
 import com.store.project.application.response.ResponseData;
 import com.store.project.application.response.ResponseDataStatus;
 import com.store.project.application.util.FileUploadBinary;
+import com.store.project.application.util.SecurityUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -360,10 +361,8 @@ public class ProductServiceImpl implements ProductService{
 
     private String getUserId() {
         //SecurityContext 로그인 내역 확인
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDetails userDetails = (UserDetails) principal;
-        String userId = userDetails.getUsername();
-        return userId;
+        Optional<String> currentUserName = SecurityUtil.getCurrentUserName();
+        return currentUserName.get();
     }
 
     private void productChange(Product product , RequestProduct reProduct){
@@ -408,6 +407,7 @@ public class ProductServiceImpl implements ProductService{
         sale.setStore(product.getStore());
         sale.setClient(clientRepository.findById(getUserId()).get());
         sale.setCommit("1");
+        sale.setCategory("card");
         return saleRepository.save(sale);
     }
 

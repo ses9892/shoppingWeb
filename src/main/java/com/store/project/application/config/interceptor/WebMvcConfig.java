@@ -19,9 +19,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(cookieAuthInterceptor)
-                .addPathPatterns("/api/v1/**")
-                .excludePathPatterns("/api/v1/login.do","/api/v1/register.do","/api/v1/duplication.do");
+//        registry.addInterceptor(cookieAuthInterceptor)
+//                .addPathPatterns("/api/v1/**")
+//                .excludePathPatterns("/api/v1/login.do","/api/v1/register.do","/api/v1/duplication.do");
         //  user/login = 로그인 요청을 받으면 요청메소드를 처리전에 인터셉터에서 걸어둔 필터를 한번 거친다.
     }
     @Bean

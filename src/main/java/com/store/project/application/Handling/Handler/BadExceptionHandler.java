@@ -17,6 +17,8 @@ import com.store.project.application.response.ResponseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -45,6 +47,14 @@ public class BadExceptionHandler {
                 .code(UserDuplicateException.code)
                 .build()
         );
+    }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ResponseData> AccessDeniedException(AccessDeniedException exception){
+        ResponseData responseData = ResponseData.builder()
+                .status(HttpStatus.FORBIDDEN).code(ResponseDataStatus.FORBIDDEN)
+                .message("Token Forbidden error (403)")
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseData);
     }
     @ExceptionHandler(AnonyMousNotException.class)
     public ResponseEntity<ResponseData> AnonyMousNotException(AnonyMousNotException exception){

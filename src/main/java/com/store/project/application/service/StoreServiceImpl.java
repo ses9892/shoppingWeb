@@ -11,6 +11,7 @@ import com.store.project.application.domain.entity.Store;
 import com.store.project.application.request.RequestStoreInfoChange;
 import com.store.project.application.response.ResponseData;
 import com.store.project.application.response.ResponseDataStatus;
+import com.store.project.application.util.SecurityUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -165,10 +166,8 @@ public class StoreServiceImpl implements StoreService {
 
     private String getUserId() {
         //SecurityContext 로그인 내역 확인
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDetails userDetails = (UserDetails) principal;
-        String userId = userDetails.getUsername();
-        return userId;
+        Optional<String> currentUserName = SecurityUtil.getCurrentUserName();
+        return currentUserName.get();
     }
 
     //클래스화 하자

@@ -21,6 +21,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,18 +60,21 @@ public class MainRestController {
 
     //정보 조회
     @GetMapping(value = "/api/v1/users.do")
+    @PreAuthorize("hasAnyAuthority('SELLER','USER','ADMIN')")
     public ResponseEntity<ResponseData> myinfo(){
         ResponseData responseData =userService.myinfo();
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
     //유저 정보 수정
     @PutMapping(value = "/api/v1/users.do")
+    @PreAuthorize("hasAnyAuthority('SELLER','USER','ADMIN')")
     public ResponseEntity<ResponseData> infoChange(@RequestBody RequestClientInfoChange requestClientInfoChange){
         ResponseData responseData =userService.infoChange(requestClientInfoChange);
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
     }
     //유저 정보 삭제(회원탈퇴)
     @DeleteMapping(value = "/api/v1/users.do")
+    @PreAuthorize("hasAnyAuthority('SELLER','USER','ADMIN')")
     public ResponseEntity<ResponseData> infoDelete(){
         ResponseData responseData =userService.infoDelete();
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
@@ -78,6 +82,7 @@ public class MainRestController {
 
     //상점등록
     @PostMapping(value = "/api/v1/store.do")
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
     public ResponseEntity<ResponseData> insertStore(@RequestBody RequestStoreInfo storeInfo){
         StoreDto storeDto = new ModelMapper().map(storeInfo,StoreDto.class);
         ResponseData responseData = storeService.insertStore(storeDto);
@@ -85,6 +90,7 @@ public class MainRestController {
     }
     //상점정보 조회
     @GetMapping(value = "/api/v1/store.do")
+    @PreAuthorize("hasAnyAuthority('SELLER','ADMIN')")
     public ResponseEntity<ResponseData> storeInfo(){
         ResponseData responseData = storeService.storeInfo();
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
@@ -94,6 +100,7 @@ public class MainRestController {
 
     //상점 정보 변경
     @PutMapping(value = "/api/v1/store.do")
+    @PreAuthorize("hasAnyAuthority('SELLER','ADMIN')")
     public ResponseEntity<ResponseData> storeInfoChange(@RequestBody RequestStoreInfoChange requestStoreInfoChange){
         ResponseData responseData = storeService.storeInfoChange(requestStoreInfoChange);
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
@@ -101,6 +108,7 @@ public class MainRestController {
 
     //전체 상점 조회 (pageable)
     @GetMapping(value = "/api/v1/store/list")
+    @PreAuthorize("hasAnyAuthority('USER','SELLER','ADMIN')")
     public ResponseEntity<ResponseData> storeList(@RequestParam("page") int page, PagedResourcesAssembler<Store> assembler){
         int size = Integer.parseInt(env.getProperty("shopping.store.size"));
         PageRequest pageRequest = PageRequest.of(page,size);
@@ -109,6 +117,7 @@ public class MainRestController {
     }
     //상점 이름 검색
     @GetMapping(value = "/api/v1/store/list/search")
+    @PreAuthorize("hasAnyAuthority('USER','SELLER','ADMIN')")
     public ResponseEntity<ResponseData> storeSearch(HttpServletRequest request, PagedResourcesAssembler<Store> assembler){
         int size = Integer.parseInt(env.getProperty("shopping.store.size"));
         int page = Integer.parseInt(request.getParameter("page"));

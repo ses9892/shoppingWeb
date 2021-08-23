@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -45,6 +46,7 @@ public class ProductRestController {
 //        return null;
 //    }
     @PostMapping("/api/v1/product")
+    @PreAuthorize("hasAnyAuthority('SELLER','ADMIN')")
     public ResponseEntity<ResponseData> insertProduct(@Valid @RequestBody RequestProduct product){
         if(product.getFileBase64()==null || product.getFileName()==null){
             throw new FileNotUploadException("이미지 파일이 정상적으로 업로드 되지 않았습니다.");
@@ -66,18 +68,21 @@ public class ProductRestController {
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
     }
     @PutMapping(value = "/api/v1/product")
+    @PreAuthorize("hasAnyAuthority('SELLER','ADMIN')")
     public ResponseEntity<ResponseData> productDataChange(@RequestBody RequestProduct product){
         ResponseData responseData = productService.productDataChange(product);
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
     }
 
     @PutMapping(value = "/api/v1/product/stock/{idx}")
+    @PreAuthorize("hasAnyAuthority('SELLER','ADMIN')")
     public ResponseEntity<ResponseData> productDataChange(@PathVariable("idx") int idx , @Valid @RequestBody RequestStockData StockData){
         ResponseData responseData = productService.productStockUpdate(StockData,idx);
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
     }
 
     @DeleteMapping(value = "/api/v1/product")
+    @PreAuthorize("hasAnyAuthority('SELLER','ADMIN')")
     public ResponseEntity<ResponseData> productDataChange(@RequestParam("idx") int idx){
         ResponseData responseData = productService.productDataDelete(idx);
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
