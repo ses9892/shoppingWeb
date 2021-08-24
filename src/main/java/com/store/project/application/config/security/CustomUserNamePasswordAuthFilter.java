@@ -2,6 +2,7 @@ package com.store.project.application.config.security;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.stream.Collectors;
-
+@Slf4j
 public class CustomUserNamePasswordAuthFilter extends UsernamePasswordAuthenticationFilter {
 
     private Boolean postOnly = true;
@@ -26,6 +27,7 @@ public class CustomUserNamePasswordAuthFilter extends UsernamePasswordAuthentica
         if(postOnly && !request.getMethod().equals("POST")){
             throw new AuthenticationServiceException("Auth method not Supported : " + request.getMethod());
         }
+        log.info("Content-type : "+ request.getHeader("Content-type"));
         if(request.getHeader("Content-type").equals("application/json")) {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
@@ -39,6 +41,8 @@ public class CustomUserNamePasswordAuthFilter extends UsernamePasswordAuthentica
         }
             String username = obtainUsername(request);
             String password = obtainPassword(request);
+            log.info("result id :"+username);
+            log.info("result password :"+password);
 
             if(username==null){
                 username = "";
@@ -56,6 +60,7 @@ public class CustomUserNamePasswordAuthFilter extends UsernamePasswordAuthentica
     @Override
     protected String obtainPassword(HttpServletRequest request) {
         String pwdParameter = super.getPasswordParameter();
+        log.info("obtainPassword : "+pwdParameter);
         if(request.getHeader("Content-type").equals("application/json")){
             return jsonRequest.get(pwdParameter);
         }
@@ -65,6 +70,7 @@ public class CustomUserNamePasswordAuthFilter extends UsernamePasswordAuthentica
     @Override
     protected String obtainUsername(HttpServletRequest request) {
         String userIdParameter = super.getUsernameParameter();
+        log.info("obtainPassword : "+userIdParameter);
         if(request.getHeader("Content-type").equals("application/json")){
             return jsonRequest.get(userIdParameter);
         }
