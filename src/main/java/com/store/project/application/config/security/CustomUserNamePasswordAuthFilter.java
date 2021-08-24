@@ -28,7 +28,8 @@ public class CustomUserNamePasswordAuthFilter extends UsernamePasswordAuthentica
             throw new AuthenticationServiceException("Auth method not Supported : " + request.getMethod());
         }
         log.info("Content-type : "+ request.getHeader("Content-type"));
-        if(request.getHeader("Content-type").equals("application/json")) {
+        if(request.getHeader("Content-type").equals("application/json")||
+           request.getHeader("Content-type").equals("application/json;charset=UTF-8")) {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 this.jsonRequest = objectMapper.readValue(request.getReader().lines().collect(Collectors.joining()),
@@ -61,7 +62,8 @@ public class CustomUserNamePasswordAuthFilter extends UsernamePasswordAuthentica
     protected String obtainPassword(HttpServletRequest request) {
         String pwdParameter = super.getPasswordParameter();
         log.info("obtainPassword : "+pwdParameter);
-        if(request.getHeader("Content-type").equals("application/json")){
+        if(request.getHeader("Content-type").equals("application/json")||
+                request.getHeader("Content-type").equals("application/json;charset=UTF-8")){
             return jsonRequest.get(pwdParameter);
         }
         return request.getParameter(pwdParameter);
@@ -71,7 +73,8 @@ public class CustomUserNamePasswordAuthFilter extends UsernamePasswordAuthentica
     protected String obtainUsername(HttpServletRequest request) {
         String userIdParameter = super.getUsernameParameter();
         log.info("obtainPassword : "+userIdParameter);
-        if(request.getHeader("Content-type").equals("application/json")){
+        if(request.getHeader("Content-type").equals("application/json")||
+           request.getHeader("Content-type").equals("application/json;charset=UTF-8")){
             return jsonRequest.get(userIdParameter);
         }
         return request.getParameter(userIdParameter);
