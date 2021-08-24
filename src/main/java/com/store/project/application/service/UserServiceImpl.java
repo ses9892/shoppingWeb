@@ -9,6 +9,7 @@ import com.store.project.application.domain.entity.Client;
 import com.store.project.application.request.RequestClientInfoChange;
 import com.store.project.application.response.ResponseData;
 import com.store.project.application.response.ResponseDataStatus;
+import com.store.project.application.util.EmailHtmlCreate;
 import com.store.project.application.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -25,10 +26,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import javax.mail.MessagingException;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -39,6 +38,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    MailService mailService;
 
     //회원가입
     @Override
@@ -150,6 +152,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResponseData forgetPassword(String userId) {
+        log.info("forgetPassword() run");
+        Optional<Client> userEntity = clientRepository.findById(userId);
+        if(!userEntity.isPresent()){
+            throw new UserNotFoundException("존재하지 않는 회원 아이디 입니다.");
+        }
+        log.info("userId is get");
+        String email = userEntity.get().getEmail();
+        String flag = "forgetPwd";
+        String savedPwd = this.certified_key();
+        String encodePwd = passwordEncoder.encode(savedPwd);
+        clientRepository.updatePassword(userId,encodePwd);
+        log.info("저장된 비밀번호 : "+encodePwd);
+        String html = new EmailHtmlCreate().emailSendBuffer(savedPwd,flag);
+        try {
+            mailService.sendMail(email,"[비밀번호 찾기 전송]",html);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        log.info("메일전송");
+        return ResponseData.builder()
+                .status(HttpStatus.OK)
+                .code(ResponseDataStatus.SUCCESS)
+                .message("해당 아이디의 이메일로 임시비밀번호가 전송되었습니다.")
+                .build();
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         log.info("LoadUserByUSerName: "+userId);
         Optional<Client> Client = clientRepository.findById(userId);
@@ -165,5 +195,22 @@ public class UserServiceImpl implements UserService {
         //SecurityContext 로그인 내역 확인
         Optional<String> currentUserName = SecurityUtil.getCurrentUserName();
         return currentUserName.get();
+    }
+
+    private String certified_key() {
+        Random random = new Random();
+        StringBuffer sb = new StringBuffer();
+        int num = 0;
+
+        do {
+            num = random.nextInt(75) + 48;
+            if ((num >= 48 && num <= 57) || (num >= 65 && num <= 90) || (num >= 97 && num <= 122)) {
+                sb.append((char) num);
+            } else {
+                continue;
+            }
+
+        } while (sb.length() < 10);
+        return sb.toString();
     }
 }

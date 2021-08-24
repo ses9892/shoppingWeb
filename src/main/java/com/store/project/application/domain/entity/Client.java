@@ -33,6 +33,8 @@ public class Client implements Serializable {
     @Column
     private String address;
 
+    private String email;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 

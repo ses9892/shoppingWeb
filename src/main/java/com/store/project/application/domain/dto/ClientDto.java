@@ -32,6 +32,8 @@ public class ClientDto {
 
     private String address;
 
+    private String email;
+
     private Role role;
 
     private int s_idx;

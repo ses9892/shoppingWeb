@@ -35,7 +35,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler i
         items.put("userId",userDetails.getUsername());
         items.put("role",userDetails.getAuthorities());
         String token = tokenProvider.createToken(authentication);
-        items.put("token",token);
         //토큰 response
         ResponseData responseData = ResponseData.builder()
                                     .status(HttpStatus.OK).code(ResponseDataStatus.SUCCESS)
@@ -43,6 +42,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler i
                                     .item(items)
                                     .build();
         ObjectMapper mapper = new ObjectMapper();
+        response.setHeader("AccessToken",token);
         response.getWriter().print(mapper.writeValueAsString(responseData));
         response.getWriter().flush();
         //JWT 쓸건지 안쓸건지의 유무

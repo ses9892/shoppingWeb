@@ -16,4 +16,6 @@ public interface UserService extends UserDetailsService {
     ResponseData infoChange(RequestClientInfoChange info);
 
     ResponseData infoDelete();
+
+    ResponseData forgetPassword(String userId);
 }

@@ -16,4 +16,9 @@ public interface ClientRepository extends CrudRepository<Client,String>{
     public int updateRole(String userId, Role role);
 
     public Boolean existsByUserId(String userId);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "UPDATE Client a SET a.password = ?2 where a.userId = ?1")
+    @Transactional
+    public int updatePassword(String userId,String encodePassword);
 }

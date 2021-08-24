@@ -40,7 +40,7 @@ public class JwtFilter extends GenericFilterBean {
         String requestURI = httpServletRequest.getRequestURI();
         Boolean aBoolean = JwtExcludeUrl(requestURI, httpServletRequest);
 
-        if(aBoolean){
+        if(!aBoolean){
             chain.doFilter(request, response);
             return;
         }
@@ -75,15 +75,21 @@ public class JwtFilter extends GenericFilterBean {
             requestURI.equals("/api/v1/product/search")||
             requestURI.equals("/api/v1/review/list")||
             requestURI.equals("/api/v1/review/search")||
-            requestURI.equals("/api/v1/review")
+            requestURI.equals("/api/v1/review") ||
+            requestURI.equals("/api/v1/fotgetpwd") ||
+            requestURI.equals("/error")
+
         ){
+            log.info(requestURI+"jwtExclude!");
             return false;
         }
         String method = httpServletRequest.getMethod();
-        if(method.equals("GET") || requestURI.equals("/api/v1/product")){
+        if(method.equals("GET") && requestURI.equals("/api/v1/product")){
+            log.info(requestURI+"jwtExclude!");
             return false;
         }
-        if(method.equals("GET") || requestURI.equals("/api/v1/product/sale")){
+        if(method.equals("GET") && requestURI.equals("/api/v1/product/sale")){
+            log.info(requestURI+"jwtExclude!");
             return false;
         }
         return true;

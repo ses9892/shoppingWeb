@@ -55,8 +55,8 @@ public class sercurityConfig extends WebSecurityConfigurerAdapter {
     //static 무시
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/css/**", "/js/**");
-        
+        web.ignoring().antMatchers("/css/**", "/js/**","/h2-cosole/**");
+
 
     }
 
@@ -70,6 +70,7 @@ public class sercurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/api/v1/register.do").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/api/v1/duplication.do").permitAll()
+                .antMatchers("/api/v1/fotgetpwd").permitAll()
                 .antMatchers("/api/v1/store/list","/api/v1/store/list/search").permitAll()
                 .antMatchers("/api/v1/product/list").permitAll()
                 .antMatchers("/api/v1/product/search").permitAll()

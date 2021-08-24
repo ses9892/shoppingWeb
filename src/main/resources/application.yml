@@ -7,13 +7,14 @@ spring:
     prefix: classpath:/templates/
   datasource:
 #    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:testdb
     driver-class-name: com.mysql.jdbc.Driver
     url:   jdbc:mysql://shopapplication.ch5yswrkfhkp.us-east-2.rds.amazonaws.com:3306/shopping?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
     username: ses9892
     password: 11111111
-#    url: jdbc:h2:mem:testdb
     initialization-mode: always
     platform: h2
+    data: classpath:data.sql
   h2:
     console:
       path: /h2-console
@@ -21,7 +22,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
@@ -29,6 +30,15 @@ spring:
           lob:
             non_contextual_creation: true
         #insert into product (P_IDX ,P_NAME ,P_PRICE ,STORE_S_IDX ) values(1,'이름',10000,58745874);
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ses1238@gmail.com
+    password: tdrrqd99
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
 #바인딩
 logging:
   level:

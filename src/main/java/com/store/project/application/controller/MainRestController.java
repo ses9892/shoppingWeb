@@ -65,6 +65,13 @@ public class MainRestController {
         ResponseData responseData =userService.myinfo();
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
+
+    @GetMapping(value = "/api/v1/fotgetpwd")
+    public ResponseEntity<ResponseData> forgetPassword(@RequestParam("userId") String userId){
+        ResponseData responseData =userService.forgetPassword(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
+
     //유저 정보 수정
     @PutMapping(value = "/api/v1/users.do")
     @PreAuthorize("hasAnyAuthority('SELLER','USER','ADMIN')")
