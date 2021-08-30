@@ -15,7 +15,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
@@ -28,12 +31,22 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler i
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-
+        ObjectMapper mapper = new ObjectMapper();
         HashMap<String,Object> items = new HashMap<>();
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDetails userDetails = (UserDetails) principal;
-        items.put("userId",userDetails.getUsername());
-        items.put("role",userDetails.getAuthorities());
+        Map map2 = mapper.convertValue(principal, Map.class);
+        LinkedHashMap<String,String> attributes = (LinkedHashMap<String, String>) map2.get("attributes");
+        if(attributes !=null){
+            // Oauth2
+            String user_role = authentication.getAuthorities().iterator().next().toString();
+            items.put("userId",attributes.get("email"));
+            items.put("role",user_role);
+        }else{
+            // normal
+            UserDetails userDetails = (UserDetails) principal;
+            items.put("userId",userDetails.getUsername());
+            items.put("role",userDetails.getAuthorities());
+        }
         String token = tokenProvider.createToken(authentication);
         //토큰 response
         ResponseData responseData = ResponseData.builder()
@@ -41,7 +54,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler i
                                     .message("Login Success!")
                                     .item(items)
                                     .build();
-        ObjectMapper mapper = new ObjectMapper();
         response.setHeader("AccessToken",token);
         response.getWriter().print(mapper.writeValueAsString(responseData));
         response.getWriter().flush();

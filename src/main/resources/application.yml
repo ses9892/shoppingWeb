@@ -1,6 +1,9 @@
+
 server:
   port: 8080
 spring:
+  profiles:
+    include: oauth
   application:
     name: shoppingProject
   thymeleaf:
@@ -14,7 +17,7 @@ spring:
     password: 11111111
     initialization-mode: always
     platform: h2
-    data: classpath:data.sql
+#    data: classpath:data.sql
   h2:
     console:
       path: /h2-console
@@ -22,7 +25,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true

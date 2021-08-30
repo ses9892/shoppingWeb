@@ -6,6 +6,7 @@ import com.store.project.application.config.jwt.JwtAccessDeniedHandler;
 import com.store.project.application.config.jwt.JwtAuthenticationEntryPoint;
 import com.store.project.application.config.jwt.JwtSecurityConfig;
 import com.store.project.application.config.jwt.TokenProvider;
+import com.store.project.application.service.CustomAuth2UserService;
 import com.store.project.application.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +42,17 @@ public class sercurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     UserService userService;
+    CustomAuth2UserService customAuth2UserService;
+
 
     @Autowired
     public sercurityConfig(TokenProvider tokenProvider, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAccessDeniedHandler jwtAccessDeniedHandler
-    ,UserService userService) {
+    ,UserService userService,CustomAuth2UserService customAuth2UserService) {
         this.tokenProvider = tokenProvider;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
         this.userService = userService;
+        this.customAuth2UserService = customAuth2UserService;
     }
 
 
@@ -74,7 +78,7 @@ public class sercurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/store/list","/api/v1/store/list/search").permitAll()
                 .antMatchers("/api/v1/product/list").permitAll()
                 .antMatchers("/api/v1/product/search").permitAll()
-                //상품조회는 인증없이통과
+                .antMatchers("/oauth2/authorization/google").permitAll()//상품조회는 인증없이통과
                 .antMatchers(HttpMethod.GET,"/api/v1/product").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/v1/product/sale").permitAll()
                 .antMatchers("/api/v1/review/list","/api/v1/review/search").permitAll()
@@ -84,13 +88,18 @@ public class sercurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/logout")
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true)
-                .permitAll();
+                .permitAll()
+            .and()
+                .oauth2Login()
+                .successHandler(new LoginSuccessHandler(tokenProvider))
+                .userInfoEndpoint().userService(customAuth2UserService);
         // 401 , 403 Token Exception Handling
         http.headers().frameOptions().sameOrigin();//h2-console
         //세션미사용
         http.addFilterAt(getAuthFilter(), UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.apply(new JwtSecurityConfig(tokenProvider));
+
     }
 
     @Override

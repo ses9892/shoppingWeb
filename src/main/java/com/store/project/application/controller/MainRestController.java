@@ -45,9 +45,10 @@ public class MainRestController {
 
     @PostMapping(value = "/api/v1/register.do")
     public ResponseEntity<ResponseData> register(@RequestBody @Valid ClientDto clientDto){
-        //register(clientDto)
        ResponseData responseData =  userService.register(clientDto);
         //로직....
+
+        log.info("여기는 회원가입 컨트롤러");
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
     }
     @GetMapping(value = "/api/v1/duplication.do")
