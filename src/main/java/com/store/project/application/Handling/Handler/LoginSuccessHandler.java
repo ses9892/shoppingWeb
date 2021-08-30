@@ -48,13 +48,14 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler i
             items.put("role",userDetails.getAuthorities());
         }
         String token = tokenProvider.createToken(authentication);
+        items.put("access_token",token);
         //토큰 response
         ResponseData responseData = ResponseData.builder()
                                     .status(HttpStatus.OK).code(ResponseDataStatus.SUCCESS)
                                     .message("Login Success!")
                                     .item(items)
                                     .build();
-        response.setHeader("AccessToken",token);
+//        response.setHeader("AccessToken",token);
         response.getWriter().print(mapper.writeValueAsString(responseData));
         response.getWriter().flush();
         //JWT 쓸건지 안쓸건지의 유무

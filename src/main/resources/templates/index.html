@@ -1,10 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <title>Title</title>
 </head>
 <body>
-<h1>Hi</h1>
+<input type="text" id="userId"><br>
+<input type="password" id="password"><br>
+<button type="button" id="login">login</button>
 </body>
+<script>
+    $(function (){
+        $('#login').click(function (){
+            $.ajax({
+                type: 'POST',
+                url: 'http://ec2-3-15-99-108.us-east-2.compute.amazonaws.com:8080/login',
+                dataType: 'json',
+                data : {
+                    userId: $('#userId').val(),
+                    password: $('#password').val()
+                }
+            }).done(function (json){
+                console.log(json);
+            }).error(function (ejson){
+                console.log(ejson);
+            })
+        })
+
+    })
+</script>
 </html>
