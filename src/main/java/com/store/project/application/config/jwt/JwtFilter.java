@@ -75,7 +75,6 @@ public class JwtFilter extends GenericFilterBean {
             requestURI.equals("/api/v1/product/search")||
             requestURI.equals("/api/v1/review/list")||
             requestURI.equals("/api/v1/review/search")||
-            requestURI.equals("/api/v1/review") ||
             requestURI.equals("/api/v1/fotgetpwd") ||
             requestURI.equals("/error")
 
@@ -89,6 +88,10 @@ public class JwtFilter extends GenericFilterBean {
             return false;
         }
         if(method.equals("GET") && requestURI.equals("/api/v1/product/sale")){
+            log.info(requestURI+"jwtExclude!");
+            return false;
+        }
+        if(method.equals("GET") && requestURI.equals("/api/v1/review")){
             log.info(requestURI+"jwtExclude!");
             return false;
         }

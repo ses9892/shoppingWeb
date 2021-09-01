@@ -17,6 +17,7 @@ import com.store.project.application.util.FileUploadBinary;
 import com.store.project.application.util.SecurityUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,8 +27,6 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -39,6 +38,9 @@ import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService{
+
+    @Autowired
+    Environment env;
 
     @Autowired
     StoreRepository storeRepository;
@@ -71,13 +73,12 @@ public class ProductServiceImpl implements ProductService{
         HashMap<String,String> hmap = new HashMap<>();
         hmap.put("fileName",product.getFileName());
         hmap.put("fileBase64",product.getFileBase64());
-        File file = fileUpload.fileUpload(hmap);
-
-        String path = file.getPath();
+        String saveName = fileUpload.fileUpload(hmap);
+        String imgPath = this.getImagesResourcesPath(saveName);
         //상품저장
         Product productEntity = new ModelMapper().map(product,Product.class);
         productEntity.setP_originalName(product.getFileName());
-        productEntity.setP_saveName(file.toString());
+        productEntity.setP_saveName(imgPath);
         //상점번호
         Optional<Store> store = storeRepository.findByClient_UserId(getUserId());
         productEntity.setStore(store.get());
@@ -365,7 +366,7 @@ public class ProductServiceImpl implements ProductService{
         return currentUserName.get();
     }
 
-    private void productChange(Product product , RequestProduct reProduct){
+    private void productChange(Product product, RequestProduct reProduct){
         if(reProduct.getPName()!=null){ product.setPName(reProduct.getPName()); }
         if(reProduct.getP_price()==null){ product.setP_price(Integer.parseInt(reProduct.getP_price())); }
         if(reProduct.getP_description()!=null){ product.setP_description(reProduct.getP_description());}
@@ -386,7 +387,9 @@ public class ProductServiceImpl implements ProductService{
             HashMap<String,String> hmap = new HashMap<>();
             hmap.put("fileName",reProduct.getFileName());
             hmap.put("fileBase64",reProduct.getFileBase64());
-            product.setP_saveName(fileUpload.fileUpload(hmap).getPath());
+            String saveName = fileUpload.fileUpload(hmap);
+            String imagesResourcesPath = this.getImagesResourcesPath(saveName);
+            product.setP_saveName(imagesResourcesPath);
         }
 
     }
@@ -429,5 +432,9 @@ public class ProductServiceImpl implements ProductService{
             if(!refundRepository.existsById((long) randomIdx)){ break;}
         }
         return randomIdx;
+    }
+
+    private String getImagesResourcesPath(String saveName){
+        return env.getProperty("custom.path.resources-images-path")+saveName;
     }
 }

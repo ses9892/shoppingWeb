@@ -71,5 +71,6 @@ jwt:
 
 custom:
   path:
+    resources-images-path: '/img/'
     upload-images-window: 'file:///D:/shopImg/'
     upload-images-linux: 'file:/home/ec2-user/Shop-data/img/'

@@ -49,7 +49,8 @@ public class ProductRestController {
     @PostMapping("/api/v1/product")
     @PreAuthorize("hasAnyAuthority('SELLER','ADMIN')")
     public ResponseEntity<ResponseData> insertProduct(@Valid @RequestBody RequestProduct product, HttpServletRequest request){
-        log.info("server Domain : "+request.getServerName()+":"+request.getServerPort());
+//        log.info("server Domain : "+request.getServerName()+":"+request.getServerPort());
+//        String serverDomain = request.getServerName()+":"+request.getServerPort();
         if(product.getFileBase64()==null || product.getFileName()==null){
             throw new FileNotUploadException("이미지 파일이 정상적으로 업로드 되지 않았습니다.");
         }
@@ -71,7 +72,9 @@ public class ProductRestController {
     }
     @PutMapping(value = "/api/v1/product")
     @PreAuthorize("hasAnyAuthority('SELLER','ADMIN')")
-    public ResponseEntity<ResponseData> productDataChange(@RequestBody RequestProduct product){
+    public ResponseEntity<ResponseData> productDataChange(@RequestBody RequestProduct product,HttpServletRequest request){
+//        log.info("server Domain : "+request.getServerName()+":"+request.getServerPort());
+//        String serverDomain = request.getServerName()+":"+request.getServerPort();
         ResponseData responseData = productService.productDataChange(product);
         return ResponseEntity.status(responseData.getStatus()).body(responseData);
     }

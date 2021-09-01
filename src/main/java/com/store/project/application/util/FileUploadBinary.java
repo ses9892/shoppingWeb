@@ -42,7 +42,7 @@ public class FileUploadBinary {
     }
     //return : 저장할 파일이름
 
-    public File fileUpload(HashMap<String,String> hmap){
+    public String fileUpload(HashMap<String,String> hmap){
         //파일 있나없나 검사
         //폴더 없을시 폴더생성
         //HashMap Data
@@ -70,7 +70,7 @@ public class FileUploadBinary {
         }catch (Exception e){
             e.printStackTrace();
         }
-        return file;
+        return saveName;
     }
 
     private void MakePath(String OsPath) {

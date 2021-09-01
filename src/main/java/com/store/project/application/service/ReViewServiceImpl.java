@@ -16,6 +16,7 @@ import com.store.project.application.response.ResponseData;
 import com.store.project.application.response.ResponseDataStatus;
 import com.store.project.application.util.FileUploadBinary;
 import com.store.project.application.util.HateOasLoader;
+import com.store.project.application.util.ImagesResourcePath;
 import com.store.project.application.util.SecurityUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -57,12 +58,13 @@ public class ReViewServiceImpl implements ReViewService{
     ReViewRepository reViewRepository;
     ReViewCommentRepository reViewCommentRepository;
     SaleRepository saleRepository;
+    ImagesResourcePath imagesResourcePath;
     @Autowired
-    public ReViewServiceImpl(ReViewRepository reViewRepository,StoreRepository storeRepository,
+    public ReViewServiceImpl(ReViewRepository reViewRepository, StoreRepository storeRepository,
                              ClientRepository clientRepository, FileUploadBinary fileUpload,
                              ProductRepository productRepository, StockRepository stockRepository,
-                             EntityManager entityManager,ReViewCommentRepository reViewCommentRepository,
-                             SaleRepository saleRepository) {
+                             EntityManager entityManager, ReViewCommentRepository reViewCommentRepository,
+                             SaleRepository saleRepository, ImagesResourcePath imagesResourcePath) {
         this.storeRepository = storeRepository;
         this.clientRepository = clientRepository;
         this.fileUpload = fileUpload;
@@ -72,6 +74,7 @@ public class ReViewServiceImpl implements ReViewService{
         this.reViewRepository=  reViewRepository;
         this.reViewCommentRepository = reViewCommentRepository;
         this.saleRepository = saleRepository;
+        this.imagesResourcePath = imagesResourcePath;
     }
 
     @Override
@@ -84,20 +87,19 @@ public class ReViewServiceImpl implements ReViewService{
             throw new RuntimeException("해당상품의 구매내역이 있어야만 리뷰글을 작성할 수 있습니다.");
         }
         //이미지 업로딩검사 + 업로드
-        File file = null;
+        String saveName = null;
         if(reViewDto.getFileBase64()==null || reViewDto.getFileName()==null){
         }else{
             HashMap<String,String> hmap = new HashMap<>();
             hmap.put("fileName",reViewDto.getFileName());
             hmap.put("fileBase64",reViewDto.getFileBase64());
-            file = fileUpload.fileUpload(hmap);
+            saveName = fileUpload.fileUpload(hmap);
         }
-        String path = file.getPath();
         //ReView Entity 정보 셋팅
         reViewDto.setIdx(0);
         ReView reViewData = new ModelMapper().map(reViewDto,ReView.class);
         reViewData.setOriginalFileName(reViewData.getFileName());
-        reViewData.setFileName(path);
+        reViewData.setFileName(imagesResourcePath.getImagesResourcesPath(saveName));
         reViewData.setProduct(product);
         reViewData.setStore(product.getStore());
         reViewData.setWriter(getUserId());
@@ -331,7 +333,8 @@ public class ReViewServiceImpl implements ReViewService{
             HashMap<String,String> hmap = new HashMap<>();
             hmap.put("fileName",reViewDto.getFileName());
             hmap.put("fileBase64",reViewDto.getFileBase64());
-            reView.setFileName(fileUpload.fileUpload(hmap).getPath());
+            String saveName = fileUpload.fileUpload(hmap);
+            reView.setFileName(imagesResourcePath.getImagesResourcesPath(saveName));
         }
 
     }
