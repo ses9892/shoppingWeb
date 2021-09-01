@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -47,7 +48,8 @@ public class ProductRestController {
 //    }
     @PostMapping("/api/v1/product")
     @PreAuthorize("hasAnyAuthority('SELLER','ADMIN')")
-    public ResponseEntity<ResponseData> insertProduct(@Valid @RequestBody RequestProduct product){
+    public ResponseEntity<ResponseData> insertProduct(@Valid @RequestBody RequestProduct product, HttpServletRequest request){
+        log.info("server Domain : "+request.getServerName()+":"+request.getServerPort());
         if(product.getFileBase64()==null || product.getFileName()==null){
             throw new FileNotUploadException("이미지 파일이 정상적으로 업로드 되지 않았습니다.");
         }

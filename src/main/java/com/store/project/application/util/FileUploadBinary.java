@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.UUID;
 @Component
 public class FileUploadBinary {
-
+//    private final String imgResourcePath
     private final String windowUploadPath = Paths.get("D:","shopImg").toString();
     private final String linuxUploadPath = "/home/ec2-user/Shop-data/img";
     String filebase64;

@@ -1,29 +1,43 @@
 package com.store.project.application.config.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    private final CookieAuthInterceptor cookieAuthInterceptor;
+    private String windowUploadImgesPath;
+    private String linuxUploadImagesPath;
+    private Environment env;
+
 
     @Autowired
-    public WebMvcConfig(CookieAuthInterceptor cookieAuthInterceptor) {
-        this.cookieAuthInterceptor = cookieAuthInterceptor;
+    public WebMvcConfig(@Value("${custom.path.upload-images-window}") String windowUploadImgesPath,
+                        @Value("${custom.path.upload-images-linux}")String linuxUploadImagesPath, Environment env) {
+        this.windowUploadImgesPath=windowUploadImgesPath;
+        this.linuxUploadImagesPath = linuxUploadImagesPath;
+        this.env=env;
     }
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(cookieAuthInterceptor)
-//                .addPathPatterns("/api/v1/**")
-//                .excludePathPatterns("/api/v1/login.do","/api/v1/register.do","/api/v1/duplication.do");
-        //  user/login = 로그인 요청을 받으면 요청메소드를 처리전에 인터셉터에서 걸어둔 필터를 한번 거친다.
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        String os = System.getProperty("os.name").toLowerCase();
+        if(os.equals("windows 10")){
+            registry.addResourceHandler("/img/**")
+                    .addResourceLocations(windowUploadImgesPath);
+        }else{
+            registry.addResourceHandler("/img/**")
+                    .addResourceLocations(linuxUploadImagesPath);
+        }
     }
+
     @Bean
     public CommonsMultipartResolver multipartResolver() {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
