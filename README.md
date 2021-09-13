@@ -12,24 +12,24 @@
 
 ## 📚 AWS EC2
 - ###AWS EC2
-    ![img_1.png](img_1.png)
+    ![img.png](ReadMeImg/img.png)
 - ### API 서버를 위한 인바운드 포트 개방
-    ![img_2.png](img_2.png)
+    ![img_2.png](ReadMeImg/img_2.png)
 ## 📚 AWS RDS
 - ### RDS (MYSQL)
-    ![img_3.png](img_3.png)
+    ![img_3.png](ReadMeImg/img_3.png)
 - ### GUI Tool (Query Box)
-    ![img_4.png](img_4.png)
+    ![img_4.png](ReadMeImg/img_4.png)
 ## 📚 JenKins
 - #### JenKins 서버포트 개방
-  ![img_8.png](img_8.png)
+  ![img_6.png](ReadMeImg/img_6.png)
 - ####Git Token Repository
-![img_5.png](img_5.png)
+  ![img_7.png](ReadMeImg/img_7.png)
 - #### Git & Jenkins WebHook Connect
-![img_6.png](img_6.png)
+![img_8.png](ReadMeImg/img_8.png)
 - #### JenKins Logic + Shell Script 
-![img_7.png](img_7.png)
-![img_9.png](img_9.png)
+![img_9.png](ReadMeImg/img_9.png)
+![img_10.png](ReadMeImg/img_10.png)
 
     
 
